@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [Header("Only used for FixedTime move type")]
     [SerializeField] private float moveTime = 1f;
+
+    private Animator _animator;
+    private static readonly int IsWalking = Animator.StringToHash("walking");
+
+    private void Start() {
+        _animator = GetComponent<Animator>();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -38,7 +47,10 @@ public class PlayerMovement : MonoBehaviour
     
     private IEnumerator MovePlayer(Vector3 mousePos)
     {
+        _animator.SetBool(IsWalking, true);
         Vector3 distance = new Vector3(mousePos.x, 0f, mousePos.z) - new Vector3(transform.position.x, 0f, transform.position.z);
+        // rotate the player to face the mouse position
+        transform.rotation = Quaternion.LookRotation(distance);
 
         if (moveType == MoveType.FixedSpeed) {
             // move the player to the mouse position
@@ -56,5 +68,6 @@ public class PlayerMovement : MonoBehaviour
                 yield return null;
             }
         }
+        _animator.SetBool(IsWalking, false);
     }
 }
