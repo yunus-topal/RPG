@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,14 @@ public class PlayerController : MonoBehaviour
         FixedTime,
         FixedSpeed
     }
+    // UI fields
+    [SerializeField] private int playerCurrentHP = 100;
+    [SerializeField] private int playerMaxHP = 100;
+    [SerializeField] private Sprite characterSprite;
+    
+    public int PlayerCurrentHp => playerCurrentHP;
+    public int PlayerMaxHp => playerMaxHP;
+    public Sprite CharacterSprite => characterSprite;
     
     // movement fields
     [SerializeField] private MoveType moveType = MoveType.FixedSpeed;
@@ -20,46 +29,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveTime = 1f;
     
     [SerializeField] private float attackRange = 1f;
-    
+
     // animation fields
     private Animator _animator;
     private static readonly int IsWalking = Animator.StringToHash("walking");
     private static readonly int AttackTrigger = Animator.StringToHash("attack_trigger");
-    private Coroutine _moveCoroutine;
 
     private void Start() {
         _animator = GetComponent<Animator>();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) // Check for left mouse button click
-        {
-            // Raycast from the mouse position to find the position on a plane
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            
-            if (Physics.Raycast(ray, out hit))
-            {
-                var hitTag = hit.transform.gameObject.tag;
-                switch (hitTag) {
-                    case "Ground":
-                        if(_moveCoroutine != null) StopCoroutine(_moveCoroutine);
-                        _moveCoroutine = StartCoroutine(PlayerMove(hit.point));
-                        break;
-                    case "Enemy":
-                        Debug.Log("Enemy clicked");
-                        if(_moveCoroutine != null) StopCoroutine(_moveCoroutine);
-                        _moveCoroutine = StartCoroutine(PlayerAttack(hit.transform.gameObject));
-                        return;
-                }
-            }
-        }
-    }
     
-    
-    private IEnumerator PlayerMove(Vector3 mousePos)
+    public IEnumerator PlayerMove(Vector3 mousePos)
     {
         _animator.SetBool(IsWalking, true);
         Vector3 distance = new Vector3(mousePos.x, 0f, mousePos.z) - new Vector3(transform.position.x, 0f, transform.position.z);
@@ -85,7 +65,7 @@ public class PlayerController : MonoBehaviour
         _animator.SetBool(IsWalking, false);
     }
 
-    private IEnumerator PlayerAttack(GameObject enemy = null)
+    public IEnumerator PlayerAttack(GameObject enemy = null)
     {
         // TODO: enemy size should be considered in the calculation
         // calculate the target location for player to move to
