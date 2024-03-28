@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay {
     public class PlayerController : MonoBehaviour
@@ -14,6 +15,10 @@ namespace Gameplay {
         [SerializeField] private int playerCurrentHP = 100;
         [SerializeField] private int playerMaxHP = 100;
         [SerializeField] private Sprite characterSprite;
+        
+        [SerializeField] private SpriteRenderer circleSpriteRenderer;
+        
+        public SpriteRenderer CircleSpriteRenderer => circleSpriteRenderer;
     
         public int PlayerCurrentHp => playerCurrentHP;
         public int PlayerMaxHp => playerMaxHP;

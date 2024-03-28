@@ -4,6 +4,8 @@ namespace Gameplay {
     public class EnemyStatus : MonoBehaviour
     {
         [SerializeField] private float health = 100f;
+        [SerializeField] private Material circleMaterial;
+        [SerializeField] private SpriteRenderer circleSpriteRenderer;
 
         private Animator _animator;
         private static readonly int HitTrigger = Animator.StringToHash("hit_trigger");
@@ -11,6 +13,7 @@ namespace Gameplay {
 
         private void Start() {
             _animator = GetComponent<Animator>();
+            circleSpriteRenderer.material = circleMaterial;
         }
 
         public void GetHit(float damage) {
