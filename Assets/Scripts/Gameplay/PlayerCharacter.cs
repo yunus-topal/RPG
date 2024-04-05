@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Gameplay {
-    public class PlayerController : MonoBehaviour
+    public class PlayerCharacter : Character
     {
         // define enum for move type
         private enum MoveType
@@ -19,7 +19,6 @@ namespace Gameplay {
         [SerializeField] private SpriteRenderer circleSpriteRenderer;
         
         public SpriteRenderer CircleSpriteRenderer => circleSpriteRenderer;
-    
         public int PlayerCurrentHp => playerCurrentHP;
         public int PlayerMaxHp => playerMaxHP;
         public Sprite CharacterSprite => characterSprite;
@@ -40,8 +39,12 @@ namespace Gameplay {
 
         private void Start() {
             _animator = GetComponent<Animator>();
+            Initialize();
         }
-    
+
+        private void Initialize() {
+            Initiative = UnityEngine.Random.Range(1, 100);
+        }
         public IEnumerator PlayerMove(Vector3 mousePos)
         {
             _animator.SetBool(IsWalking, true);
@@ -77,7 +80,7 @@ namespace Gameplay {
             yield return StartCoroutine(PlayerMove(targetPos));
             _animator.SetTrigger(AttackTrigger);
             // TODO: implement attack logic
-            enemy.GetComponent<EnemyStatus>().GetHit(40f);
+            enemy.GetComponent<EnemyCharacter>().GetHit(40f);
         }
     }
 }

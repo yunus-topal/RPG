@@ -9,7 +9,7 @@ namespace Controllers {
         [SerializeField] private Image characterSprite;
         [SerializeField] private TextMeshProUGUI healthText;
         
-        public void UpdateHUD(PlayerController currentPlayer) {
+        public void UpdateHUD(PlayerCharacter currentPlayer) {
             healthText.text = $"HP: {currentPlayer.PlayerCurrentHp}/{currentPlayer.PlayerMaxHp}";
             characterSprite.sprite = currentPlayer.CharacterSprite;
             var cam = Camera.main;

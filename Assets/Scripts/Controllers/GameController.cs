@@ -1,14 +1,27 @@
+using System.Collections.Generic;
 using Gameplay;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Controllers {
+    public enum GameState {
+        Combat,
+        Exploration
+    }
     public class GameController : MonoBehaviour
     {
         private Coroutine _moveCoroutine;
         private GameObject[] _players;
-        private PlayerController _currentPlayer;
+        private PlayerCharacter _currentPlayer;
         private UIController _uiController;
+        private List<Combat> _combats = new List<Combat>();
+        
+        private GameState _gameState = GameState.Exploration;
+        public GameState GameState {
+            get => _gameState;
+            set => _gameState = value;
+        }
+
         [SerializeField] private GameObject portraitPrefab;
         [SerializeField] private Material selectedCircleMaterial;
         [SerializeField] private Material deselectedCircleMaterial;
@@ -23,7 +36,7 @@ namespace Controllers {
                 Debug.LogError("No players found!");
                 return;
             }
-            _currentPlayer = _players[0].GetComponent<PlayerController>();
+            _currentPlayer = _players[0].GetComponent<PlayerCharacter>();
             _uiController = FindObjectOfType<UIController>();
             _uiController.UpdateHUD(_currentPlayer);
             CreatePortraitsAndCircles();
@@ -33,42 +46,47 @@ namespace Controllers {
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetMouseButtonDown(0)) // Check for left mouse button click
-            {
-                // Raycast from the mouse position to find the position on a plane
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-            
-                if (Physics.Raycast(ray, out hit))
+            if (_gameState == GameState.Exploration) {
+                if (Input.GetMouseButtonDown(0)) // Check for left mouse button click
                 {
-                    var hitTag = hit.transform.gameObject.tag;
-                    switch (hitTag) {
-                        case "Player":
-                            var oldPlayer = _currentPlayer;
-                            _currentPlayer = hit.transform.gameObject.GetComponent<PlayerController>();
-                            _uiController.UpdateHUD(_currentPlayer);
-                            UpdateCircles();
-                            break;
-                        case "Ground":
-                            if(_moveCoroutine != null) StopCoroutine(_moveCoroutine);
-                            _moveCoroutine = StartCoroutine(_currentPlayer.PlayerMove(hit.point));
-                            break;
-                        case "Enemy":
-                            Debug.Log("Enemy clicked");
-                            if(_moveCoroutine != null) StopCoroutine(_moveCoroutine);
-                            _moveCoroutine = StartCoroutine(_currentPlayer.PlayerAttack(hit.transform.gameObject));
-                            break;
-                        default:
-                            Debug.Log("Unknown tag clicked: " + hitTag);
-                            break;
+                    // Raycast from the mouse position to find the position on a plane
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+
+                    if (Physics.Raycast(ray, out hit)) {
+                        var hitTag = hit.transform.gameObject.tag;
+                        switch (hitTag) {
+                            case "Player":
+                                var oldPlayer = _currentPlayer;
+                                _currentPlayer = hit.transform.gameObject.GetComponent<PlayerCharacter>();
+                                _uiController.UpdateHUD(_currentPlayer);
+                                UpdateCircles();
+                                break;
+                            case "Ground":
+                                if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
+                                _moveCoroutine = StartCoroutine(_currentPlayer.PlayerMove(hit.point));
+                                break;
+                            case "Enemy":
+                                Debug.Log("Enemy clicked");
+                                if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
+                                _moveCoroutine = StartCoroutine(_currentPlayer.PlayerAttack(hit.transform.gameObject));
+                                break;
+                            default:
+                                Debug.Log("Unknown tag clicked: " + hitTag);
+                                break;
+                        }
                     }
                 }
+            }
+            else if (_gameState == GameState.Combat) {
+                //TODO: show turn order UI
+                Debug.Log("Combat state");
             }
         }
         
         void UpdateCircles() {
             foreach (var playerObject in _players) {
-                playerObject.GetComponent<PlayerController>().CircleSpriteRenderer.material = deselectedCircleMaterial;
+                playerObject.GetComponent<PlayerCharacter>().CircleSpriteRenderer.material = deselectedCircleMaterial;
             }
             _currentPlayer.CircleSpriteRenderer.material = selectedCircleMaterial;
         }
@@ -77,7 +95,7 @@ namespace Controllers {
             // create portrait for each player object
             foreach (var playerObject in _players) {
                 // create portrait for each player object
-                var playerController = playerObject.GetComponent<PlayerController>();
+                var playerController = playerObject.GetComponent<PlayerCharacter>();
                 var portrait = Instantiate(portraitPrefab, Vector3.zero, Quaternion.identity);
                 portrait.transform.SetParent(GameObject.Find("PartyPortraits").transform);
                 
@@ -92,5 +110,6 @@ namespace Controllers {
                 playerController.CircleSpriteRenderer.material = deselectedCircleMaterial;
             }
         }
+        
     }
 }
