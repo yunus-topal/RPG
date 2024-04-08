@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Controllers;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -36,15 +38,26 @@ namespace Gameplay {
         private Animator _animator;
         private static readonly int IsWalking = Animator.StringToHash("walking");
         private static readonly int AttackTrigger = Animator.StringToHash("attack_trigger");
+        
+        // game fields
+        private GameController _gameController;
 
         private void Start() {
             _animator = GetComponent<Animator>();
+            _gameController = FindObjectOfType<GameController>();
             Initialize();
         }
 
         private void Initialize() {
             Initiative = UnityEngine.Random.Range(1, 100);
         }
+
+        private void Update() {
+            if(_gameController.CurrentPlayer == this) {
+                // TODO: read input from the player
+            }
+        }
+
         public IEnumerator PlayerMove(Vector3 mousePos)
         {
             _animator.SetBool(IsWalking, true);

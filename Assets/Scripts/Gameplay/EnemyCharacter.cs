@@ -27,19 +27,19 @@ namespace Gameplay {
         }
 
         private void Update() {
-            // check if there is a player nearby
-            Collider[] colliders = Physics.OverlapSphere(transform.position, aggroRange);
+            if (State == CharState.Exploration) {
+                // check if there is a player nearby
+                Collider[] colliders = Physics.OverlapSphere(transform.position, aggroRange);
 
-            // Iterate through the colliders
-            foreach (Collider collider in colliders)
-            {
-                // Do something with the collider, e.g., check its tag or interact with it
-                if (collider.CompareTag("Player"))
-                {
-                    Debug.Log("Player detected!");
-                    _gameController.GameState = GameState.Combat;
+                // Iterate through the colliders
+                foreach (Collider collider in colliders) {
+                    State = CharState.Combat;
                 }
             }
+            else if (State == CharState.Combat) {
+                Debug.Log("Enemy is in combat. Waiting for its turn.");
+            }
+
         }
 
         public void GetHit(float damage) {

@@ -5,64 +5,50 @@ namespace Gameplay {
     public class Combat : MonoBehaviour
     {
         private List<Character> _characters = new();
-        private Queue<Character> _turnQueue = new();
+        // turn queue, first in first out. Add items to the last index.
+        private List<Character> _turnQueue = new();
 
         private void Initialize(List<Character> characters) {
-            this._characters = characters;
+            _characters = characters;
             characters.Sort();
+            
             // add everyone twice to the turn queue
-            EnqueueCharacters();
-            EnqueueCharacters();
+            _turnQueue.Clear();
+            _turnQueue.AddRange(_characters);
+            _turnQueue.AddRange(_characters);
         }
         
-        private void PlayNextTurn() {
+        public void PlayNextTurn() {
             if (_turnQueue.Count == 0) return;
             
-            Character currentCharacter = _turnQueue.Dequeue();
+            Character currentCharacter = _turnQueue[0];
             if (currentCharacter is PlayerCharacter playerCharacter) {
                 // player turn
-                Debug.Log("Player's turn");
+                Debug.Log("Call player turn logic");
             } else if (currentCharacter is EnemyCharacter enemyCharacter) {
-                // enemy turn
-                Debug.Log("Enemy's turn");
+                // TODO: call enemy turn logic
+                Debug.Log("Call enemy turn logic");
             }
             
             if(_turnQueue.Count <= _characters.Count) {
-                EnqueueCharacters();
-            }
-        }
-        
-        private void EnqueueCharacters() {
-            foreach (Character character in _characters) {
-                _turnQueue.Enqueue(character);
+                _turnQueue.AddRange(_characters);
             }
         }
 
         private void CharacterLeft(Character character) {
             _characters.Remove(character);
             // leftover turns should stay, but dead character should be removed.
-            Queue<Character> newQueue = new Queue<Character>();
-            for(int i = 0; i < _turnQueue.Count; i++) {
-                Character poppedChar = _turnQueue.Dequeue();
-                if (poppedChar != character) {
-                    newQueue.Enqueue(poppedChar);
-                }
-            }
-            _turnQueue = newQueue;
+            _turnQueue.RemoveAll(c => c == character);
         }
 
         private void CharacterJoined(Character character) {
             int leftovers = _turnQueue.Count % _characters.Count;
-            
-            Queue<Character> newQueue = new Queue<Character>();
-            for(int i = 0; i < leftovers; i++) {
-                Character poppedChar = _turnQueue.Dequeue();
-                newQueue.Enqueue(poppedChar);
-            }
-            
             _characters.Add(character);
             _characters.Sort();
-            EnqueueCharacters();
+            
+            // find the insert index.
+            int index = _characters.IndexOf(character);
+            _turnQueue.Insert(leftovers + index,character);
         }
 
         // TODO: Implement this method
