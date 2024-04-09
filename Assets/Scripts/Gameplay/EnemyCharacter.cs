@@ -33,7 +33,12 @@ namespace Gameplay {
 
                 // Iterate through the colliders
                 foreach (Collider collider in colliders) {
-                    _gameController.StartCombat(this);
+                    if (collider.gameObject.CompareTag("Player")) {
+                        // only one combat instance should be started
+                        _gameController.StartCombat(this);
+                        State = CharState.Combat;
+                        break;
+                    }
                 }
             }
             else if (State == CharState.Combat) {

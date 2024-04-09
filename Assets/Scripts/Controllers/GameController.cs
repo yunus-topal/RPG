@@ -38,20 +38,25 @@ namespace Controllers {
         }
 
         public void StartCombat(Character character) {
-            Debug.Log("Start combat with " + character.name);
+            Debug.Log("Combat started by " + character.name);
             Combat newCombat = new Combat();
             // Get all characters involved in combat by overlapping sphere
             Collider[] colliders = Physics.OverlapSphere(character.transform.position, aggroRange);
             List<Character> characters = new List<Character>();
             foreach (var c in colliders) {
                 if (c.gameObject.CompareTag("Player")) {
-                    characters.Add(c.gameObject.GetComponent<PlayerCharacter>());
+                    var playerComponent = c.gameObject.GetComponent<PlayerCharacter>();
+                    characters.Add(playerComponent);
+                    playerComponent.State = Character.CharState.Combat;
                 } else if (c.gameObject.CompareTag("Enemy")) {
-                    characters.Add(c.gameObject.GetComponent<EnemyCharacter>());
+                    var enemyComponent = c.gameObject.GetComponent<EnemyCharacter>();
+                    characters.Add(enemyComponent);
+                    enemyComponent.State = Character.CharState.Combat;
                 }
             }
             Debug.Log("number of characters in combat: " + characters.Count);
             newCombat.Initialize(characters);
+            CreateCombatPortraits(newCombat);
         }
     
         // Update is called once per frame
@@ -116,6 +121,28 @@ namespace Controllers {
                 });
                 // set circles,
                 playerController.CircleSpriteRenderer.material = deselectedCircleMaterial;
+            }
+        }
+
+        void CreateCombatPortraits(Combat combat){
+            // create portrait for each player object
+            foreach (var character in combat.Characters) {
+                var portrait = Instantiate(portraitPrefab, Vector3.zero, Quaternion.identity);
+                portrait.transform.SetParent(GameObject.Find("CombatPortraits").transform);
+                portrait.GetComponent<Image>().sprite = character.CharacterSprite;
+                
+                if (character is PlayerCharacter) {
+                    Debug.Log("Player character found in combat.");
+                    // set portrait image and button click event
+                    portrait.GetComponent<Button>().onClick.AddListener(() => {
+                        _currentPlayer = character as PlayerCharacter;
+                        _uiController.UpdateHUD(_currentPlayer);
+                        UpdateCircles();
+                    });
+                }else if(character is EnemyCharacter) {
+                    Debug.Log("Enemy character found in combat.");
+                    // TODO: add move camera to enemy character on click function
+                }
             }
         }
         

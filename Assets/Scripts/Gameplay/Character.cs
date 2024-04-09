@@ -3,16 +3,18 @@ using UnityEngine;
 
 namespace Gameplay {
     public abstract class Character : MonoBehaviour, IComparable<Character> {
-        protected enum CharState {
+        public enum CharState {
             Exploration,
             Combat
         }
-        
-        private CharState _state = CharState.Exploration;
-        protected CharState State { get; set; }
+
+        public CharState State { get; set; } = CharState.Exploration;
+
         private int _initiative;
         protected int Initiative { get;  set; }
         
+        [SerializeField] private Sprite characterSprite;
+        public Sprite CharacterSprite => characterSprite;
         public int CompareTo(Character other) {
             if (other == null)
                 return 1;

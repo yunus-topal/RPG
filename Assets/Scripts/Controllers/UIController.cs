@@ -15,6 +15,5 @@ namespace Controllers {
             var cam = Camera.main;
             cam.gameObject.GetComponent<CameraController>().CameraTarget = currentPlayer.gameObject.transform;
         }
-    
     }
 }

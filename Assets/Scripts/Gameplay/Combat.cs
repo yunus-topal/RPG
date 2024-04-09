@@ -6,6 +6,7 @@ namespace Gameplay {
     public class Combat
     {
         private List<Character> _characters = new();
+        public List<Character> Characters {get { return _characters; } }
         // turn queue, first in first out. Add items to the last index.
         private List<Character> _turnQueue = new();
 

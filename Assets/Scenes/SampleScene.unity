@@ -273,6 +273,7 @@ MonoBehaviour:
   portraitPrefab: {fileID: 8807914898268640206, guid: 2adfcf800b590ec48bae318f49b69d23, type: 3}
   selectedCircleMaterial: {fileID: 2100000, guid: 1ccec5b327367ef489e5d128675373b7, type: 2}
   deselectedCircleMaterial: {fileID: 2100000, guid: 89c605940d83e5640aef3a512b153d1a, type: 2}
+  aggroRange: 5
 --- !u!1 &196630981
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,7 +569,7 @@ GameObject:
   - component: {fileID: 679431420}
   - component: {fileID: 679431421}
   m_Layer: 5
-  m_Name: TurnOrderPortraits
+  m_Name: CombatPortraits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1323,7 +1324,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1988836857703126541, guid: 28d70fe16db82e34da8c21276d30c60c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.74
+      value: 5.08
       objectReference: {fileID: 0}
     - target: {fileID: 1988836857703126541, guid: 28d70fe16db82e34da8c21276d30c60c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1331,7 +1332,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1988836857703126541, guid: 28d70fe16db82e34da8c21276d30c60c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 23.05
+      value: 13.6
       objectReference: {fileID: 0}
     - target: {fileID: 1988836857703126541, guid: 28d70fe16db82e34da8c21276d30c60c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1361,6 +1362,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2260539662462012847, guid: 28d70fe16db82e34da8c21276d30c60c, type: 3}
+      propertyPath: characterSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e0754e6d2b6a3934eb7b8053c0a58e7a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
