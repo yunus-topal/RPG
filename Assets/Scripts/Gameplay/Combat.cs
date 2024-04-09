@@ -1,14 +1,15 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Gameplay {
-    public class Combat : MonoBehaviour
+    public class Combat
     {
         private List<Character> _characters = new();
         // turn queue, first in first out. Add items to the last index.
         private List<Character> _turnQueue = new();
 
-        private void Initialize(List<Character> characters) {
+        public void Initialize(List<Character> characters) {
             _characters = characters;
             characters.Sort();
             
@@ -22,10 +23,7 @@ namespace Gameplay {
             if (_turnQueue.Count == 0) return;
             
             Character currentCharacter = _turnQueue[0];
-            if (currentCharacter is PlayerCharacter playerCharacter) {
-                // player turn
-                Debug.Log("Call player turn logic");
-            } else if (currentCharacter is EnemyCharacter enemyCharacter) {
+            if (currentCharacter is EnemyCharacter enemyCharacter) {
                 // TODO: call enemy turn logic
                 Debug.Log("Call enemy turn logic");
             }
@@ -55,5 +53,6 @@ namespace Gameplay {
         private void MergeCombats(Combat otherCombat) {
             
         }
+        
     }
 }

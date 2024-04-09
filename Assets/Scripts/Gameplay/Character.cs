@@ -4,11 +4,11 @@ using UnityEngine;
 namespace Gameplay {
     public abstract class Character : MonoBehaviour, IComparable<Character> {
         protected enum CharState {
-            Combat,
-            Exploration
+            Exploration,
+            Combat
         }
         
-        private CharState _state;
+        private CharState _state = CharState.Exploration;
         protected CharState State { get; set; }
         private int _initiative;
         protected int Initiative { get;  set; }

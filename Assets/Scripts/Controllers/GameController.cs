@@ -17,9 +17,13 @@ namespace Controllers {
         private UIController _uiController;
         private List<Combat> _combats = new List<Combat>();
 
+        [Header("UI Elements")]
         [SerializeField] private GameObject portraitPrefab;
         [SerializeField] private Material selectedCircleMaterial;
         [SerializeField] private Material deselectedCircleMaterial;
+        
+        [Header("Game Values")]
+        [SerializeField] private float aggroRange = 5f;
         private void Start() {
             _players = GameObject.FindGameObjectsWithTag("Player");
             if(_players.Length == 0) {
@@ -31,6 +35,23 @@ namespace Controllers {
             _uiController.UpdateHUD(_currentPlayer);
             CreatePortraitsAndCircles();
             UpdateCircles();
+        }
+
+        public void StartCombat(Character character) {
+            Debug.Log("Start combat with " + character.name);
+            Combat newCombat = new Combat();
+            // Get all characters involved in combat by overlapping sphere
+            Collider[] colliders = Physics.OverlapSphere(character.transform.position, aggroRange);
+            List<Character> characters = new List<Character>();
+            foreach (var c in colliders) {
+                if (c.gameObject.CompareTag("Player")) {
+                    characters.Add(c.gameObject.GetComponent<PlayerCharacter>());
+                } else if (c.gameObject.CompareTag("Enemy")) {
+                    characters.Add(c.gameObject.GetComponent<EnemyCharacter>());
+                }
+            }
+            Debug.Log("number of characters in combat: " + characters.Count);
+            newCombat.Initialize(characters);
         }
     
         // Update is called once per frame
@@ -69,12 +90,6 @@ namespace Controllers {
                     }
                 }
             }
-            
-            // handle combat.
-            foreach (var combat in _combats) {
-                combat.PlayNextTurn();
-            }
-            
         }
         
         void UpdateCircles() {

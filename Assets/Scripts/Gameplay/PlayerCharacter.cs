@@ -41,6 +41,7 @@ namespace Gameplay {
         
         // game fields
         private GameController _gameController;
+        private Coroutine _moveCoroutine;
 
         private void Start() {
             _animator = GetComponent<Animator>();
@@ -53,9 +54,57 @@ namespace Gameplay {
         }
 
         private void Update() {
-            if(_gameController.CurrentPlayer == this) {
-                // TODO: read input from the player
+            if (_gameController.CurrentPlayer == this) {
+                if(State == CharState.Exploration) {
+                    ExplorationUpdate();
+                } else if (State == CharState.Combat) {
+                    CombatUpdate();
+                }
             }
+            else {
+                if(State == CharState.Exploration) {
+                    FollowCurrentPlayer();
+                }
+            }
+        }
+
+        private void ExplorationUpdate() {
+            // handle interaction
+            if (Input.GetMouseButtonDown(0)) // Check for left mouse button click
+            {
+                // Raycast from the mouse position to find the position on a plane
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit)) {
+                    var hitTag = hit.transform.gameObject.tag;
+                    switch (hitTag) {
+                        case "Ground":
+                            if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
+                            _moveCoroutine = StartCoroutine(PlayerMove(hit.point));
+                            break;
+                        case "Enemy":
+                            Debug.Log("Enemy clicked");
+                            if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
+                            _moveCoroutine = StartCoroutine(PlayerAttack(hit.transform.gameObject));
+                            break;
+                        
+                        default:
+                            Debug.Log("Unknown tag clicked: " + hitTag);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void CombatUpdate() {
+            // TODO: implement combat logic
+            
+            // TODO: callback Combat class to play next turn
+        }
+        
+        private void FollowCurrentPlayer() {
+            // TODO implement follow logic
         }
 
         public IEnumerator PlayerMove(Vector3 mousePos)

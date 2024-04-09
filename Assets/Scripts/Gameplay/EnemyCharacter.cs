@@ -33,7 +33,7 @@ namespace Gameplay {
 
                 // Iterate through the colliders
                 foreach (Collider collider in colliders) {
-                    State = CharState.Combat;
+                    _gameController.StartCombat(this);
                 }
             }
             else if (State == CharState.Combat) {
